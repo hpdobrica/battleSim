@@ -1,5 +1,7 @@
-'use strict';
+class BattleManager{
+    constructor(){
 
-export default class BattleManager{
+    }
 
 }
+module.exports = BattleManager;

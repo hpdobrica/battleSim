@@ -1,16 +1,15 @@
-export default {
+module.exports = {
     armies: {
         min: 2,
         max: Number.MAX_SAFE_INTEGER
     },
-    attackStrategies: ['random', 'weakest', 'strongest'],
     squads: {
-        minPerArmy: 2,
-        maxPerArmy: Number.MAX_SAFE_INTEGER
+        min: 2,
+        max: Number.MAX_SAFE_INTEGER
     },
     units: {
-        minPerSquad: 5,
-        maxPerSquad: 10,
+        min: 5,
+        max: 10,
         defaultHp: 100,
         soldiers: {
             defaultXp: 0,
@@ -30,6 +29,7 @@ export default {
                 max: 2000
             },
         }
-    }
+    },
+    attackStrategies: ['random', 'weakest', 'strongest'],
 
 }
