@@ -7,18 +7,24 @@ const chai = require('chai').should();
 
 describe("Squad", () => {
     let squad = null;
+    let container = {
+        children: [],
+        isActive(){
+
+        }
+    };
     it('should create a squad', () => {
-        squad = new Squad(3,"random");
+        squad = new Squad(3,"random",container);
         squad.should.be.instanceOf(Squad);
 
-        squad.members.should.have.lengthOf(3);
+        squad.children.should.have.lengthOf(3);
         squad.strategy.should.be.equal("random");
 
     });
 
     it('should check squad\'s attack calculator', () => {
         let dummyObj = {
-            members: [
+            children: [
                 {getAttack: () => 1},
                 {getAttack: () => 2},
                 {getAttack: () => 3},

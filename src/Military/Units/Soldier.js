@@ -1,4 +1,4 @@
-const Unit = require('./Unit');
+const Unit = rootRequire('Military/Units/Unit');
 const utils = rootRequire('utils/utils');
 
 class Soldier extends Unit{
@@ -15,20 +15,12 @@ class Soldier extends Unit{
         return 0.05 + this.xp / 100;
     }
 
-    dump(){
-        let container = undefined;
-        if(typeof parent === Unit){
-            container = 'operators'
-        }else{
-            container = 'members'
+    isActive(){
+        if(this.health < 1){
+            this.dump();
+            return false;
         }
-
-        let index = this.parent[container].indexOf(this);
-        if (index > -1) {
-            this.parent[container].splice(index, 1);
-            this.parent.isActive();
-        }
-
+        return true;
     }
 }
 

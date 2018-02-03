@@ -6,13 +6,19 @@ const chai = require('chai').should();
 
 describe("Vehicle", () => {
     let vehicle = null;
+    let container = {
+        children: [],
+        isActive(){
+
+        }
+    };
     it('should create a vehicle', () => {
-        vehicle = new Vehicle();
+        vehicle = new Vehicle(container);
         vehicle.should.be.instanceOf(Unit);
         vehicle.should.be.instanceOf(Vehicle);
 
-        vehicle.operators.should.have.lengthOf.at.least(1);
-        vehicle.operators[0].should.be.instanceOf(Soldier);
+        vehicle.children.should.have.lengthOf.at.least(1);
+        vehicle.children[0].should.be.instanceOf(Soldier);
 
     });
 
@@ -25,7 +31,7 @@ describe("Vehicle", () => {
 
     it('should check vehicle\'s attack modifier calculator', () => {
         let dummyObj = {
-            operators: [
+            children: [
                 {getAttack: () => 1},
                 {getAttack: () => 2},
                 {getAttack: () => 3},

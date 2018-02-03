@@ -5,8 +5,15 @@ const chai = require('chai').should();
 
 describe("Soldier", () => {
     let soldier = null;
+    let container = {
+        children: [],
+        isActive(){
+
+        }
+    };
     it('should create a soldier', () => {
-        soldier = new Soldier();
+
+        soldier = new Soldier(container);
         soldier.should.be.instanceOf(Unit);
         soldier.should.be.instanceOf(Soldier);
 

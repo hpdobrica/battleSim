@@ -7,10 +7,10 @@ class Vehicle extends Unit{
     constructor(parent){
         super(parent);
 
-        this.operators = [];
+        this.children = [];
         let numOfOperators = utils.rand(config.units.vehicles.operators.min,config.units.vehicles.operators.max);
         for(let i = 0;i<numOfOperators;i++){
-            this.operators.push(new Soldier());
+            this.children.push(new Soldier(this));
         }
 
         this.recharge = utils.rand(config.units.vehicles.recharge.min, config.units.recharge.max);
@@ -18,32 +18,19 @@ class Vehicle extends Unit{
     }
 
     _getAttackModifier(){
-        return utils.gAvg(this.operators, "getAttack", true);
+        return utils.gAvg(this.children, "getAttack", true);
 
     }
 
     getDamage(){
         let sum = 0;
-        for(let operator of this.operators){
+        for(let operator of this.children){
             sum += operator.xp / 100;
         }
         return 0.1 + sum;
     }
 
-    isActive(){
-        if(this.health < 1){
-            this.dump();
-            return false;
-        }
 
-        let stillAlive = false;
-        for(let operator of this.operators){
-            if(operator.isActive()){
-                stillAlive = true;
-            }
-        }
-        return stillAlive;
-    }
 
 
 }

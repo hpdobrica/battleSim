@@ -1,8 +1,10 @@
 const config = rootRequire('config');
 const utils = rootRequire('utils/utils');
+const MilitaryUnit = rootRequire('Military/MilitaryUnit');
 
-class Unit{
+class Unit extends MilitaryUnit{
     constructor(parent){
+        super(parent);
         if (new.target === Unit) {
             throw new TypeError("Cannot construct a Unit directly!");
         }
@@ -22,24 +24,19 @@ class Unit{
             this.dump();
             return false;
         }
-        return true;
+        return super.isActive();
+
     }
 
     dump(){
-        let index = this.parent.members.indexOf(this);
+        let index = this.parent.children.indexOf(this);
         if (index > -1) {
-            this.parent.members.splice(index, 1);
+            this.parent.children.splice(index, 1);
             this.parent.isActive();
         }
     }
 
-    _overrideRequiredFor(overrider, fnArr){
-        for(let fn of fnArr){
-            if (typeof overrider[fn] === undefined) {
-                throw new TypeError(`${overrider.name} class must override the method ${fn}`);
-            }
-        }
-    }
+
 }
 
 module.exports = Unit;
