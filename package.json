@@ -6,11 +6,12 @@
   "scripts": {
     "start": "node src/main.js",
     "dev": "nodemon ./src/main.js --exec \"npm test\"",
-    "test": "mocha --reporter progress src/**/*.spec.js"
+    "test": "mocha --reporter progress test_setup.js src/**/*.spec.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "app-module-path": "^2.2.0",
     "yargs": "^11.0.0"
   },
   "devDependencies": {

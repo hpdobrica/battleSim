@@ -1,5 +1,10 @@
-const BattleManager = require('./BattleManager');
-const config = require('./config');
+//defining root require to avoid ../../-ing. Using this instead of require.main.require in order to share it with testing suite
+global.rootRequire = function(name) {
+    return require(__dirname + '/' + name);
+};
+
+const BattleManager = rootRequire('BattleManager');
+const config = rootRequire('config');
 
 const argv = require('yargs')
     .options(config)

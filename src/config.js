@@ -2,7 +2,7 @@ const utils = require('./utils/utils');
 
 let config = {
     armies:{
-        alias: 'a',
+        alias: ['a', 'nOfArmies'],
         describe: 'The number of armies on the battlefield',
         default: undefined,
         type: 'number',
@@ -10,7 +10,7 @@ let config = {
         max: Number.MAX_SAFE_INTEGER
     },
     squads:{
-        alias: 's',
+        alias: ['s','nOfSquads'],
         describe: 'The number of squads in an army',
         default: undefined,
         type: 'number',
@@ -18,7 +18,7 @@ let config = {
         max: Number.MAX_SAFE_INTEGER
     },
     units:{
-        alias: 'u',
+        alias: ['u', 'nOfUnits'],
         describe: 'The number of units inside of a squad',
         default: undefined,
         type: 'number',

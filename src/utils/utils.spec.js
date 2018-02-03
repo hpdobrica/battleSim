@@ -2,7 +2,7 @@ const utils = require('./utils');
 const chai = require('chai').should();
 
 describe("Utils", () => {
-    it('should return a random number', () => {
+    it('should return a random number with accurate mean', () => {
         let sum = 0;
         const bigNum = 100000;
         for(let i = 0; i<bigNum;i++){
