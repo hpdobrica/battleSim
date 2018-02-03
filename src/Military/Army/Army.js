@@ -1,6 +1,7 @@
 const Squad = rootRequire('Military/Squad/Squad');
 const config = rootRequire('config');
 
+
 class Army{
     constructor(nOfSquads = config.squads.default,
                 nOfUnits = config.units.default,

@@ -10,8 +10,6 @@ describe("Utils", () => {
         }
         let mean = sum/bigNum;
         mean.should.be.a('number');
-        mean.should.be.below(3.6);
-        mean.should.be.above(3.4);
-
+        mean.should.be.closeTo(3.5, 0.1);
     });
 });

@@ -1,4 +1,4 @@
-const utils = require('./utils/utils');
+const utils = rootRequire('utils/utils');
 
 let config = {
     armies:{
@@ -24,14 +24,15 @@ let config = {
         type: 'number',
         min: 5,
         max: 10,
-        defaultHp: 100,
+        maxHp: 100,
+        recharge: {
+            min: 100,
+            max: 2000
+        },
         soldiers: {
             defaultXp: 0,
             maxXp: 50,
-            recharge: {
-                min: 100,
-                max: 2000
-            },
+
         },
         vehicles: {
             operators: {
@@ -39,8 +40,7 @@ let config = {
                 max: 3
             },
             recharge: {
-                min: 1000,
-                max: 2000
+                min: 1000
             },
         }
     },

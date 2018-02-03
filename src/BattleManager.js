@@ -1,5 +1,4 @@
 const Army = rootRequire('Military/Army/Army');
-// let Squad = rootRequire('Military/Squad/Squad');
 
 class BattleManager{
     constructor({nOfArmies, nOfSquads, nOfUnits, strategy}){

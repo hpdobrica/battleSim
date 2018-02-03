@@ -1,4 +1,4 @@
-//defining root require to avoid ../../-ing. Using this instead of require.main.require in order to share it with testing suite
+//defining root require to avoid ../../-ing. Using this instead of require.main.require in order to share it with the testing suite
 global.rootRequire = function(name) {
     return require(__dirname + '/' + name);
 };
