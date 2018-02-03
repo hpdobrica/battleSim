@@ -13,7 +13,6 @@ class BattleManager{
     battleLoop(){
         for(let army of this.children){
             for(let squads of army.children){
-                console.log("CALLING INITIATE");
                 squads.initiateCombat(this.children);
             }
         }

@@ -46,11 +46,10 @@ class Squad extends MilitaryUnit{
     }
 
     initiateCombat(armies){
-        armies = armies.slice(0);
         //filter out allied army
-        armies.splice(armies.indexOf(this.parent),1);
+        this.everyone = armies;
         //choose a target
-        this._chooseTarget(armies);
+        this._chooseTarget();
         //start attacking
         let recharge = this._getRecharge();
         this.intervalId = setInterval(() => {
@@ -60,12 +59,13 @@ class Squad extends MilitaryUnit{
         //continue to do so until alive
     }
 
-    _chooseTarget(armies){
-
+    _chooseTarget(){
+        this.enemies = this.everyone.slice(0);
+        this.enemies.splice(this.enemies.indexOf(this.parent),1);
         // if(this.strategy === "random"){
-            let army = armies[utils.rand(0, armies.length-1)];
-            console.log(armies);
-            this.target = army.children[utils.rand(0,army.children.length)]
+            let army = this.enemies[utils.rand(0, this.enemies.length-1)];
+            this.target = army.children[utils.rand(0,army.children.length-1)];
+            console.log(`${this.parent.parent.children.indexOf(this.parent)}/${this.parent.children.indexOf(this)} has chosen #${this.target.parent.parent.children.indexOf(this.target.parent)}/${this.target.parent.children.indexOf(this.target)} for it's target`)
         // }
     }
 
@@ -82,13 +82,17 @@ class Squad extends MilitaryUnit{
     }
 
     _attack(){
+        if(this.target.health <= 0){
+            this.target = null;
+            this._chooseTarget();
+        }
         let attackPts = this.getAttack();
         let defensePts = this.target.getAttack();
         if(attackPts > defensePts){
             let dmg = this.getDamage();
+            // console.log(`#${this.parent.parent.children.indexOf(this.parent)}/${this.parent.children.indexOf(this)} > #${this.target.parent.parent.children.indexOf(this.target.parent)}/${this.target.parent.children.indexOf(this.target)} for ${dmg} damage`);
             this.target.takeDamage(dmg);
         }
-
     }
 
     takeDamage(dmg){

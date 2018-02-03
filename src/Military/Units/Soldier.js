@@ -16,11 +16,18 @@ class Soldier extends Unit{
     }
 
     isActive(){
-        if(this.health < 1){
+        if(this.health <= 0){
             this.dump();
             return false;
         }
         return true;
+    }
+
+    takeDamage(dmg){
+        this.health -= dmg;
+        if(this.health <= 0){
+            this.dump();
+        }
     }
 }
 

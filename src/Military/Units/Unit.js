@@ -20,20 +20,12 @@ class Unit extends MilitaryUnit{
     }
 
     isActive(){
-        if(this.health < 1){
+        if(this.health <= 0){
             this.dump();
             return false;
         }
         return super.isActive();
 
-    }
-
-    dump(){
-        let index = this.parent.children.indexOf(this);
-        if (index > -1) {
-            this.parent.children.splice(index, 1);
-            this.parent.isActive();
-        }
     }
 
 

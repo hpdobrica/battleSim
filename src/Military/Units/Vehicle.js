@@ -31,6 +31,35 @@ class Vehicle extends Unit{
     }
 
 
+    takeDamage(dmg){
+        let toVehicle = dmg * 0.3;
+        let toRandomChild = dmg * 0.5;
+        let toOtherChildren = dmg * 0.2;
+
+        this.health -= toVehicle;
+        if(this.health <= 0){
+            return this.dump();
+        }
+
+        let chosenChild = this.children[utils.rand(0, this.children.length-1)];
+
+        chosenChild.health -= toRandomChild;
+        let initialCount = this.children.length;
+        if(initialCount === 1 && ! chosenChild.isActive()){
+            //if there is no one else to take the damage
+            this.health -= toOtherChildren;
+        }else{
+            for(let child of this.children){
+                if(child !== chosenChild){
+                    child.health -= toOtherChildren /  this.children.length - (initialCount > this.children.length ? 0 : 1); //making sure dead passenger does not take portion of this damage
+                }
+            }
+        }
+
+
+    }
+
+
 
 
 }
