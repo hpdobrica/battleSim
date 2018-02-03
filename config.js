@@ -1,13 +1,27 @@
-module.exports = {
-    armies: {
+const helpers = require('./helpers');
+
+let config = {
+    armies:{
+        alias: 'a',
+        describe: 'The number of armies on the battlefield',
+        default: undefined,
+        type: 'number',
         min: 2,
         max: Number.MAX_SAFE_INTEGER
     },
-    squads: {
+    squads:{
+        alias: 's',
+        describe: 'The number of squads in an army',
+        default: undefined,
+        type: 'number',
         min: 2,
         max: Number.MAX_SAFE_INTEGER
     },
-    units: {
+    units:{
+        alias: 'u',
+        describe: 'The number of units inside of a squad',
+        default: undefined,
+        type: 'number',
         min: 5,
         max: 10,
         defaultHp: 100,
@@ -30,6 +44,20 @@ module.exports = {
             },
         }
     },
-    attackStrategies: ['random', 'weakest', 'strongest'],
+    strategy: {
+        alias: 't',
+        describe: 'The attack strategy that units will use',
+        choices: ['random', 'weakest', 'strongest'],
+        default: undefined,
+        type: 'string'
+    },
 
-}
+};
+
+//setting the defaults
+config.armies.default = helpers.rand(config.armies.min, 5);
+config.squads.default = helpers.rand(config.squads.min, 10);
+config.units.default =  helpers.rand(config.units.min, config.units.max);
+config.strategy.default = config.strategy.choices[helpers.rand(0,config.strategy.choices.length - 1)];
+
+module.exports = config;
