@@ -1,5 +1,5 @@
 class BattleManager{
-    constructor(){
+    constructor({armies, squads, units, strategy}){
 
     }
 
