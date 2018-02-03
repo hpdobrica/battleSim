@@ -8,7 +8,6 @@ const argv = require('yargs')
             if(config.hasOwnProperty(key) && ['armies','squads','units'].includes(key)){
                 if(!(argv[key] >= config[key].min && argv[key] <= config[key].max)){
                     throw(new Error(`Argument check failed: ${key} must be between ${config[key].min} and ${config[key].max}`));
-                    
                 }
             }
         }

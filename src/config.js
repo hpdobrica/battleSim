@@ -1,4 +1,4 @@
-const helpers = require('./helpers');
+const utils = require('./utils/utils');
 
 let config = {
     armies:{
@@ -55,9 +55,9 @@ let config = {
 };
 
 //setting the defaults
-config.armies.default = helpers.rand(config.armies.min, 5);
-config.squads.default = helpers.rand(config.squads.min, 10);
-config.units.default =  helpers.rand(config.units.min, config.units.max);
-config.strategy.default = config.strategy.choices[helpers.rand(0,config.strategy.choices.length - 1)];
+config.armies.default = utils.rand(config.armies.min, 5);
+config.squads.default = utils.rand(config.squads.min, 10);
+config.units.default =  utils.rand(config.units.min, config.units.max);
+config.strategy.default = config.strategy.choices[utils.rand(0,config.strategy.choices.length - 1)];
 
 module.exports = config;
