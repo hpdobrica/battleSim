@@ -54,7 +54,7 @@ let config = {
 
 };
 
-//setting the defaults
+//setting the defaults for yargs to use if params are not provided
 config.armies.default = utils.rand(config.armies.min, 5);
 config.squads.default = utils.rand(config.squads.min, 10);
 config.units.default =  utils.rand(config.units.min, config.units.max);

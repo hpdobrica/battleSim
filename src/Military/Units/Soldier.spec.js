@@ -5,13 +5,11 @@ const chai = require('chai').should();
 
 describe("Soldier", () => {
     let soldier = null;
-    it('should create an soldier', () => {
+    it('should create a soldier', () => {
         soldier = new Soldier();
         soldier.should.be.instanceOf(Unit);
         soldier.should.be.instanceOf(Soldier);
 
-        // army.squads.length.should.be.equal(5);
-        // army.squads[0].should.be.instanceOf(Squad);
 
     });
 

@@ -9,7 +9,7 @@ class Army{
 
         this.squads = [];
         for(let i = 0; i < nOfSquads; i++){
-            this.squads.push(new Squad(nOfUnits, strategy));
+            this.squads.push(new Squad(nOfUnits, strategy, this));
         }
 
     }
