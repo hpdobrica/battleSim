@@ -20,9 +20,8 @@ class BattleManager{
     }
 
     isActive(){
-        //COPIED FROM SIMSUBJECT, MAKE THIS A SIMSUBJECT??
         if(this.children.length <= 1){
-            console.log("============= ITS OVER =============")
+            console.log("============= ITS OVER =============");
             process.exit(0);
         }else{
             return true;

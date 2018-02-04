@@ -46,16 +46,11 @@ class Squad extends SimSubject{
     }
 
     initiateCombat(armies){
-        //filter out allied army
         this.everyone = armies;
-        //choose a target
-        this._chooseTarget();
-        //start attacking
+        
         this._getChildRecharge();
         this._setBattleInterval();
 
-
-        //continue to do so until alive
     }
 
     _chooseTarget(){
@@ -64,12 +59,11 @@ class Squad extends SimSubject{
         // if(this.strategy === "random"){
             let army = this.enemies[utils.rand(0, this.enemies.length-1)];
             this.target = army.children[utils.rand(0,army.children.length-1)];
-            console.log(`#${this.parent.getParentIndex()}/${this.getParentIndex()} has chosen #${this.target.parent.getParentIndex()}/${this.target.getParentIndex()} for it's target`)
+            // console.log(`#${this.parent.getParentIndex()}/${this.getParentIndex()} has chosen #${this.target.parent.getParentIndex()}/${this.target.getParentIndex()} for it's target`)
         // }
     }
 
     _getChildRecharge(){
-        //razmisli kad zoves get recharge (kad umre child sa maxRecharge???)
         let maxRecharge = 0;
         for(let child of this.children){
             if(child.recharge > maxRecharge){
@@ -102,6 +96,7 @@ class Squad extends SimSubject{
 
     _setBattleInterval(){
         this.intervalId = setInterval(() => {
+            this._chooseTarget();
             this._attack();
         }, this.maxChildRecharge);
     }
@@ -111,6 +106,14 @@ class Squad extends SimSubject{
         for(let child of this.children){
             child.takeDamage(perCapita);
         }
+    }
+
+    dump(){
+        if(this.intervalId){
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+        super.dump()
     }
 
 
