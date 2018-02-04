@@ -26,6 +26,10 @@ class Vehicle extends Unit{
         let sum = 0;
         for(let operator of this.children){
             sum += operator.xp / 100;
+            if(operator.xp < 50) {
+                operator.xp++;
+            }
+
         }
         return 0.1 + sum;
     }

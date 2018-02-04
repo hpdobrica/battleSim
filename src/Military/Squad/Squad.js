@@ -2,15 +2,15 @@ const config = rootRequire('config');
 const Soldier = rootRequire('Military/Units/Soldier');
 const Vehicle = rootRequire('Military/Units/Vehicle');
 const utils = rootRequire('utils/utils');
-const MilitaryUnit = rootRequire('Military/MilitaryUnit');
+const SimSubject = rootRequire('Military/SimSubject');
 
-class Squad extends MilitaryUnit{
+class Squad extends SimSubject{
     constructor(nOfUnits = config.units.default,
                 strategy = config.strategy.default,
                 parent = undefined){
         super(parent);
         this.target = null;
-        this.recharge = null;
+        this.maxChildRecharge = null;
         this.intervalId = null;
         this.strategy = strategy;
         this.children = [];
@@ -40,7 +40,7 @@ class Squad extends MilitaryUnit{
     getDamage(){
         let total = 0;
         for(let child of this.children){
-            total += child.getAttack();
+            total += child.getDamage();
         }
         return total;
     }
@@ -51,10 +51,9 @@ class Squad extends MilitaryUnit{
         //choose a target
         this._chooseTarget();
         //start attacking
-        let recharge = this._getRecharge();
-        this.intervalId = setInterval(() => {
-            this._attack();
-        }, recharge);
+        this._getChildRecharge();
+        this._setBattleInterval();
+
 
         //continue to do so until alive
     }
@@ -65,11 +64,11 @@ class Squad extends MilitaryUnit{
         // if(this.strategy === "random"){
             let army = this.enemies[utils.rand(0, this.enemies.length-1)];
             this.target = army.children[utils.rand(0,army.children.length-1)];
-            console.log(`${this.parent.parent.children.indexOf(this.parent)}/${this.parent.children.indexOf(this)} has chosen #${this.target.parent.parent.children.indexOf(this.target.parent)}/${this.target.parent.children.indexOf(this.target)} for it's target`)
+            console.log(`#${this.parent.getParentIndex()}/${this.getParentIndex()} has chosen #${this.target.parent.getParentIndex()}/${this.target.getParentIndex()} for it's target`)
         // }
     }
 
-    _getRecharge(){
+    _getChildRecharge(){
         //razmisli kad zoves get recharge (kad umre child sa maxRecharge???)
         let maxRecharge = 0;
         for(let child of this.children){
@@ -77,12 +76,18 @@ class Squad extends MilitaryUnit{
                 maxRecharge = child.recharge;
             }
         }
-        return maxRecharge;
+        this.maxChildRecharge = maxRecharge;
+
+        if(this.intervalId){
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+            this._setBattleInterval();
+        }
 
     }
 
     _attack(){
-        if(this.target.health <= 0){
+        if(this.target.parent.children.indexOf(this.target) === -1){
             this.target = null;
             this._chooseTarget();
         }
@@ -93,6 +98,12 @@ class Squad extends MilitaryUnit{
             // console.log(`#${this.parent.parent.children.indexOf(this.parent)}/${this.parent.children.indexOf(this)} > #${this.target.parent.parent.children.indexOf(this.target.parent)}/${this.target.parent.children.indexOf(this.target)} for ${dmg} damage`);
             this.target.takeDamage(dmg);
         }
+    }
+
+    _setBattleInterval(){
+        this.intervalId = setInterval(() => {
+            this._attack();
+        }, this.maxChildRecharge);
     }
 
     takeDamage(dmg){

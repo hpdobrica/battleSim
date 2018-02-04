@@ -1,9 +1,9 @@
 const Squad = rootRequire('Military/Squad/Squad');
 const config = rootRequire('config');
-const MilitaryUnit = rootRequire('Military/MilitaryUnit');
+const SimSubject = rootRequire('Military/SimSubject');
 
 
-class Army extends MilitaryUnit{
+class Army extends SimSubject{
 
     constructor(nOfSquads = config.squads.default,
                 nOfUnits = config.units.default,

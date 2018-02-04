@@ -8,6 +8,7 @@ class BattleManager{
             this.children.push(new Army(nOfSquads, nOfUnits, strategy, this));
         }
         this.battleLoop();
+        global.debug = this.children;
     }
 
     battleLoop(){
@@ -19,7 +20,15 @@ class BattleManager{
     }
 
     isActive(){
-        console.log("============= ITS OVER =============")
+        //COPIED FROM SIMSUBJECT, MAKE THIS A SIMSUBJECT??
+        if(this.children.length <= 1){
+            console.log("============= ITS OVER =============")
+            process.exit(0);
+        }else{
+            return true;
+        }
+
+
     }
 }
 module.exports = BattleManager;

@@ -12,7 +12,11 @@ class Soldier extends Unit{
     }
 
     getDamage(){
-        return 0.05 + this.xp / 100;
+        let dmg = 0.05 + this.xp / 100;
+        if(this.xp < 50){
+            this.xp++;
+        }
+        return dmg;
     }
 
     isActive(){

@@ -1,8 +1,8 @@
 const config = rootRequire('config');
 const utils = rootRequire('utils/utils');
-const MilitaryUnit = rootRequire('Military/MilitaryUnit');
+const SimSubject = rootRequire('Military/SimSubject');
 
-class Unit extends MilitaryUnit{
+class Unit extends SimSubject{
     constructor(parent){
         super(parent);
         if (new.target === Unit) {
@@ -24,8 +24,20 @@ class Unit extends MilitaryUnit{
             this.dump();
             return false;
         }
-        return super.isActive();
+        if(this.children){
+            return super.isActive();
+        }
 
+
+    }
+
+    dump(){
+        super.dump();
+        if(this.parent.hasOwnProperty('maxChildRecharge')){
+            if(this.parent.maxChildRecharge === this.recharge){
+                this.parent._getChildRecharge()
+            }
+        }
     }
 
 

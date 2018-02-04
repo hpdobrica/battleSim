@@ -1,6 +1,6 @@
-class MilitaryUnit{
+class SimSubject{
     constructor(parent){
-        if (new.target === MilitaryUnit) {
+        if (new.target === SimSubject) {
             throw new TypeError("Cannot construct a MilitaryUnit directly!");
         }
         if (typeof parent === "undefined") {
@@ -9,31 +9,32 @@ class MilitaryUnit{
         this.parent = parent;
     }
 
+    getParentIndex(){
+        return this.parent.children.indexOf(this);
+    }
+
     isActive(){
-        let stillAlive = false;
         for(let child of this.children){
             if(child.isActive()){
-                stillAlive = true;
+                return true;
             }
         }
-        if(stillAlive){
-            return true;
-        }else{
-            this.dump();
-            return false;
-        }
+        this.dump();
+        return false;
+
     }
 
 
     dump(){
-
-        let index = this.parent.children.indexOf(this);
+        let index = this.getParentIndex();
         if (index > -1) {
+            console.log(`${this.constructor.name} HAS DIED (${this.parent.children.length} more in it's parent ${this.parent.constructor.name})`);
             this.parent.children.splice(index, 1);
-
             this.parent.isActive();
+        }else{
+            throw new Error('You are dumping that which is already dumped! Don\'t!' );
         }
-        console.log(`${this.constructor.name} HAS DIED (${this.parent.children.length} more in it's parent ${this.parent.constructor.name})`);
+
     }
 
 
@@ -47,4 +48,4 @@ class MilitaryUnit{
 
 }
 
-module.exports = MilitaryUnit;
+module.exports = SimSubject;
