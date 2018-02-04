@@ -11,9 +11,10 @@ class Soldier extends Unit{
         return utils.rand(30+this.xp, 100) / 100;
     }
 
-    getDamage(){
+
+    getDamage(isAttack = true){
         let dmg = 0.05 + this.xp / 100;
-        if(this.xp < 50){
+        if(isAttack && this.xp < 50){
             this.xp++;
         }
         return dmg;
@@ -32,6 +33,8 @@ class Soldier extends Unit{
         if(this.health <= 0){
             this.dump();
         }
+        this.rating.hp.needsUpdate = true;
+        this.rating.dmg.needsUpdate = true;
     }
 }
 

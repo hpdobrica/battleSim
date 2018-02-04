@@ -38,14 +38,6 @@ class SimSubject{
     }
 
 
-    _overrideRequiredFor(overrider, fnArr){
-        for(let fn of fnArr){
-            if (typeof overrider[fn] === undefined) {
-                throw new TypeError(`${overrider.name} class must override the method ${fn}`);
-            }
-        }
-    }
-
 }
 
 module.exports = SimSubject;

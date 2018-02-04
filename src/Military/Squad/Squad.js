@@ -15,13 +15,46 @@ class Squad extends SimSubject{
         this.strategy = strategy;
         this.children = [];
 
-        nOfUnits = this._getUnitRatio(nOfUnits);
+        let unitsToCreate = this._getUnitRatio(nOfUnits);
 
-        for(let i = 0; i < nOfUnits.soldiers; i++){
+        for(let i = 0; i < unitsToCreate.soldiers; i++){
             this.children.push(new Soldier(this));
         }
-        for(let i = 0; i < nOfUnits.vehicles; i++){
+        for(let i = 0; i < unitsToCreate.vehicles; i++){
             this.children.push(new Vehicle(this));
+        }
+
+        // 1 / biggest possible value, so that each max rating adds up to 1, with the total of 4
+        this.coefficients = {
+            hp: 1 / (nOfUnits * (config.units.maxHp * 2)),
+            xp: 1 / (this.children.length * config.units.soldiers.maxXp),
+            n: 1 / nOfUnits,
+            dmg: 1 /  ( (0.1 + (config.units.soldiers.maxXp / 100) * config.units.vehicles.operators.max) * nOfUnits )// highest damage possible in simulation
+        };
+
+        this.rating = undefined;
+    }
+
+    updateRating(){
+
+        let tmpRatings = {
+            hp: 0,
+            xp: 0,
+            n: 0,
+            dmg: 0
+        };
+        for(let child of this.children){
+            let childRating = child.getRating(this.coefficients);
+            tmpRatings.hp += childRating.hp;
+            tmpRatings.dmg += childRating.dmg;
+
+        }
+        tmpRatings.xp = (this.children[0].hasOwnProperty('xp') ? this.children[0].xp : this.children[0].children[0].xp) * this.coefficients.xp;
+        tmpRatings.n = this.children.length * this.coefficients.n;
+
+        this.rating = tmpRatings.hp + tmpRatings.xp + tmpRatings.n + tmpRatings.dmg;
+        if(this.rating > 4 || tmpRatings.hp > 1 || tmpRatings.xp > 1 || tmpRatings.n > 1 || tmpRatings.dmg > 1){
+            throw new Error(`Something went wrong, ratings are limited to 1| Total: ${+this.rating.toFixed(2)}, hp:${+tmpRatings.hp.toFixed(2)} , xp:${+tmpRatings.xp.toFixed(2)} , n:${+tmpRatings.n.toFixed(2)} , dmg:${+tmpRatings.dmg.toFixed(2)} `)
         }
     }
 
@@ -42,12 +75,13 @@ class Squad extends SimSubject{
         for(let child of this.children){
             total += child.getDamage();
         }
+        this.updateRating();
         return total;
     }
 
     initiateCombat(armies){
         this.everyone = armies;
-        
+
         this._getChildRecharge();
         this._setBattleInterval();
 
@@ -59,8 +93,15 @@ class Squad extends SimSubject{
         // if(this.strategy === "random"){
             let army = this.enemies[utils.rand(0, this.enemies.length-1)];
             this.target = army.children[utils.rand(0,army.children.length-1)];
-            // console.log(`#${this.parent.getParentIndex()}/${this.getParentIndex()} has chosen #${this.target.parent.getParentIndex()}/${this.target.getParentIndex()} for it's target`)
+        // }else if(this.strategy === "strongest"){
+
+        // }else if(this.strategy === "weakest"){
+
+        // }else{
+        //     throw new Error("This attack strategy is not implemented!");
         // }
+
+        // console.log(`#${this.parent.getParentIndex()}/${this.getParentIndex()} has chosen #${this.target.parent.getParentIndex()}/${this.target.getParentIndex()} for it's target`)
     }
 
     _getChildRecharge(){
@@ -106,6 +147,10 @@ class Squad extends SimSubject{
         for(let child of this.children){
             child.takeDamage(perCapita);
         }
+        if(this.children[0]){
+            this.updateRating();
+        }
+
     }
 
     dump(){
