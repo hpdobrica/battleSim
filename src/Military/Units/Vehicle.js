@@ -42,6 +42,7 @@ class Vehicle extends Unit{
             sum += operator.xp / 100;
             if(isAttack && operator.xp < 50) {
                 operator.xp++;
+                this.rating.dmg.needsUpdate = true;
             }
 
         }

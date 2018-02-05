@@ -1,5 +1,6 @@
 const config = rootRequire('config');
 const utils = rootRequire('utils/utils');
+const Squad = rootRequire('Military/Squad/Squad');
 const SimSubject = rootRequire('Military/SimSubject');
 
 class Unit extends SimSubject{
@@ -11,7 +12,6 @@ class Unit extends SimSubject{
 
         this._overrideRequiredFor(new.target,['_getAttackModifier','getDamage']);
 
-        this.parent = parent;
         this.health = utils.rand(1, config.units.maxHp);
         this.recharge = utils.rand(config.units.recharge.min, config.units.recharge.max);
 
@@ -35,6 +35,7 @@ class Unit extends SimSubject{
             if(this.rating.hasOwnProperty(property)){
                 if(this.rating[property].needsUpdate){
                     resultRating[property] = this.rating[property].update(coefs[property]);
+                    this.rating[property].needsUpdate = false;
                 }
                 resultRating[property] = this.rating[property].val;
             }
@@ -44,13 +45,11 @@ class Unit extends SimSubject{
 
     _updateHpRating(hpCoef){
         this.rating.hp.val = this.health * hpCoef;
-        this.rating.hp.needsUpdate = false;
         return this.rating.hp.val;
     }
 
     _updateDmgRating(dmgCoef){
         this.rating.dmg.val = this.getDamage(false) * dmgCoef;
-        this.rating.dmg.needsUpdate = false;
         return this.rating.dmg.val;
     }
 
@@ -78,6 +77,9 @@ class Unit extends SimSubject{
             if(this.parent.maxChildRecharge === this.recharge){
                 this.parent._getChildRecharge()
             }
+        }
+        if(this.parent.hasOwnProperty('recalculateCoef')){
+            this.parent.recalculateCoef();
         }
     }
 

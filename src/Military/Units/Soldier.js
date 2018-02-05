@@ -16,6 +16,7 @@ class Soldier extends Unit{
         let dmg = 0.05 + this.xp / 100;
         if(isAttack && this.xp < 50){
             this.xp++;
+            this.rating.dmg.needsUpdate = true;
         }
         return dmg;
     }

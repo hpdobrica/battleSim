@@ -36,13 +36,8 @@ class Squad extends SimSubject{
     }
 
     updateRating(){
-
-        let tmpRatings = {
-            hp: 0,
-            xp: 0,
-            n: 0,
-            dmg: 0
-        };
+        let oldRating = this.rating;
+        let tmpRatings = { hp: 0, xp: 0, n: 0, dmg: 0 };
         for(let child of this.children){
             let childRating = child.getRating(this.coefficients);
             tmpRatings.hp += childRating.hp;
@@ -56,7 +51,12 @@ class Squad extends SimSubject{
         if(this.rating > 4 || tmpRatings.hp > 1 || tmpRatings.xp > 1 || tmpRatings.n > 1 || tmpRatings.dmg > 1){
             throw new Error(`Something went wrong, ratings are limited to 1| Total: ${+this.rating.toFixed(2)}, hp:${+tmpRatings.hp.toFixed(2)} , xp:${+tmpRatings.xp.toFixed(2)} , n:${+tmpRatings.n.toFixed(2)} , dmg:${+tmpRatings.dmg.toFixed(2)} `)
         }
+        if(this.strategy !== "random"){
+            this.parent.keepArmySorted(this, oldRating, this.strategy);
+        }
+
     }
+
 
     _getUnitRatio(nOfUnits){
         let r = utils.rand(0,nOfUnits);
@@ -88,12 +88,49 @@ class Squad extends SimSubject{
     }
 
     _chooseTarget(){
+        //test
+        let max = 0 ;
+        for(let squad of this.parent.children){
+            if(squad.rating > max){
+                max = squad.rating;
+            }
+        }
+        if(max  !== this.parent.children[0].rating){
+            console.log("SQUAD: Squad not sorted");
+            throw new Error('Nije dobro sortiran squad?');
+        }
+        max = 0;
+        for(let army of this.parent.parent.children){
+            if(army.children[0].rating > max){
+                max = army.children[0].rating;
+            }
+        }
+        if(max !== this.parent.parent.children[0].children[0].rating){
+            console.log("SQUAD: ARMY not sorted");
+            throw new Error('Nije dobro sortirana armija?');
+        }
+        //test
+
         this.enemies = this.everyone.slice(0);
         this.enemies.splice(this.enemies.indexOf(this.parent),1);
         // if(this.strategy === "random"){
             let army = this.enemies[utils.rand(0, this.enemies.length-1)];
             this.target = army.children[utils.rand(0,army.children.length-1)];
         // }else if(this.strategy === "strongest"){
+            // for(let enemyArmy of this.enemies){
+            //
+            // }
+            // let maxRating = Math.max.apply(Math, this.enemies.map((army) => {
+            //     army.children.map((squad) => {
+            //         return squad.rating;
+            //     })
+            // }));
+            // this.target = this.enemies.find((army) => {
+            //     return army.children.find((squad) => {
+            //         return squad.rating === maxRating;
+            //     })
+            // });
+            // console.log(this.target);
 
         // }else if(this.strategy === "weakest"){
 
@@ -159,6 +196,11 @@ class Squad extends SimSubject{
             this.intervalId = null;
         }
         super.dump()
+    }
+
+    recalculateCoef(){
+        this.coefficients.xp = 1 / (this.children.length * config.units.soldiers.maxXp);
+        this.updateRating();
     }
 
 
