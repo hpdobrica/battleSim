@@ -5,9 +5,10 @@ global.rootRequire = function(name) {
 
 const BattleManager = rootRequire('BattleManager');
 const config = rootRequire('config');
+const yargsConf = rootRequire('yargsConf');
 
 const argv = require('yargs')
-    .options(config)
+    .options(yargsConf)
     .check((argv) =>{
         for(let key in config){
             if(config.hasOwnProperty(key) && ['armies','squads','units'].includes(key)){
