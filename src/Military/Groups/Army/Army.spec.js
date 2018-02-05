@@ -1,5 +1,5 @@
-const Army = require('./Army');
-const Squad = require('../Squad/Squad');
+const Army = rootRequire('Military/Groups/Army/Army');
+const Squad = rootRequire('Military/Groups/Squad/Squad');
 const chai = require('chai').should();
 
 describe("Army", () => {

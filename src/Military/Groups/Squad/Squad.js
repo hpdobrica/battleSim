@@ -87,56 +87,36 @@ class Squad extends Group{
     }
 
     _chooseTarget(){
-        //test
-        let max = 0 ;
-        for(let squad of this.parent.children){
-            if(squad.rating > max){
-                max = squad.rating;
-            }
-        }
-        if(max  !== this.parent.children[0].rating){
-            console.log("SQUAD: Squad not sorted");
-            throw new Error('Nije dobro sortiran squad?');
-        }
-        max = 0;
-        for(let army of this.parent.parent.children){
-            if(army.children[0].rating > max){
-                max = army.children[0].rating;
-            }
-        }
-        if(max !== this.parent.parent.children[0].children[0].rating){
-            console.log("SQUAD: ARMY not sorted");
-            throw new Error('Nije dobro sortirana armija?');
-        }
-        //test
+        // //======= Sorting test =======
+        // // disabled because it's expense would kill the purpose of all the sorting
+        // let max = 0 ;
+        // for(let squad of this.parent.children){
+        //     if(squad.rating > max){
+        //         max = squad.rating;
+        //     }
+        // }
+        // if(max  !== this.parent.children[0].rating){
+        //     throw new Error('Squads are not sorted well!');
+        // }
+        // max = 0;
+        // for(let army of this.parent.parent.children){
+        //     if(army.children[0].rating > max){
+        //         max = army.children[0].rating;
+        //     }
+        // }
+        // if(max !== this.parent.parent.children[0].children[0].rating){
+        //     throw new Error('Armies are not sorted well!');
+        // }
+        // // ======= Sorting test =======
 
         this.enemies = this.everyone.slice(0);
         this.enemies.splice(this.enemies.indexOf(this.parent),1);
-        // if(this.strategy === "random"){
+        if(this.strategy === "random"){
             let army = this.enemies[utils.rand(0, this.enemies.length-1)];
             this.target = army.children[utils.rand(0,army.children.length-1)];
-        // }else if(this.strategy === "strongest"){
-            // for(let enemyArmy of this.enemies){
-            //
-            // }
-            // let maxRating = Math.max.apply(Math, this.enemies.map((army) => {
-            //     army.children.map((squad) => {
-            //         return squad.rating;
-            //     })
-            // }));
-            // this.target = this.enemies.find((army) => {
-            //     return army.children.find((squad) => {
-            //         return squad.rating === maxRating;
-            //     })
-            // });
-            // console.log(this.target);
-
-        // }else if(this.strategy === "weakest"){
-
-        // }else{
-        //     throw new Error("This attack strategy is not implemented!");
-        // }
-
+        }else {
+            this.target = this.enemies[0].children[0];
+        }
         // console.log(`#${this.parent.getParentIndex()}/${this.getParentIndex()} has chosen #${this.target.parent.getParentIndex()}/${this.target.getParentIndex()} for it's target`)
     }
 

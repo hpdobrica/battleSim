@@ -1,4 +1,4 @@
-const Soldier = rootRequire('Military/Units/Soldier');
+const Soldier = rootRequire('Military/Units/Soldier/Soldier');
 const Unit = rootRequire('Military/Units/Unit');
 
 const chai = require('chai').should();
