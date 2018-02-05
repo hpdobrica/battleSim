@@ -1,14 +1,16 @@
-const Army = rootRequire('Military/Army/Army');
+const Army = rootRequire('Military/Groups/Army/Army');
+const Group = rootRequire('Military/Groups/Group');
 
-class BattleManager{
+class BattleManager extends Group{
     constructor({nOfArmies, nOfSquads, nOfUnits, strategy}){
+        super(null);
+
         //create armies
-        this.children = [];
         for(let i = 0; i < nOfArmies; i++){
             this.children.push(new Army(nOfSquads, nOfUnits, strategy, this));
         }
         this.startBattle(strategy);
-        global.debug = this.children;
+        global.debug = this.children; //todo remove this
     }
 
     startBattle(strategy){
@@ -56,16 +58,27 @@ class BattleManager{
         }
     }
 
-    keepBattlefieldSorted(strategy){
-
-        this.children.sort((a, b) => {
-            if(strategy === "strongest"){
-                return b.children[0].rating - a.children[0].rating;
-            }else{
-                return b.children[0].rating + a.children[0].rating;
-            }
-
-        })
+    _needsToMove(modifiedChild, direction, index){
+        if(this.children[index + direction]) {
+            return direction === -1 && modifiedChild.rating > this.children[index + direction].children[0].rating ||
+                direction === 1 && modifiedChild.rating < this.children[index + direction].children[0].rating;
+        }else{
+            return false;
+        }
     }
+
+    keepChildrenSorted(modifiedChild, oldRating, strategy){
+        modifiedChild.rating = modifiedChild.children[0].rating;
+        super.keepChildrenSorted(modifiedChild, oldRating, strategy)
+
+    }
+
+    dump(){
+        throw new Error('Can\'t dump the battle manager!')
+    }
+    getParentIndex(){
+        throw new Error('Battle manager has no parent!');
+    }
+
 }
 module.exports = BattleManager;

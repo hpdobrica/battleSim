@@ -1,6 +1,5 @@
 const config = rootRequire('config');
 const utils = rootRequire('utils/utils');
-const Squad = rootRequire('Military/Squad/Squad');
 const SimSubject = rootRequire('Military/SimSubject');
 
 class Unit extends SimSubject{

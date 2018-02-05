@@ -1,5 +1,5 @@
-const Unit = require('./Unit');
-const Soldier = rootRequire('Military/Units/Soldier');
+const Unit = rootRequire('Military/Units/Unit');
+const Soldier = rootRequire('Military/Units/Soldier/Soldier');
 const utils = rootRequire('utils/utils');
 const config = rootRequire('config');
 

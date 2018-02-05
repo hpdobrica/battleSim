@@ -1,10 +1,10 @@
 const config = rootRequire('config');
-const Soldier = rootRequire('Military/Units/Soldier');
-const Vehicle = rootRequire('Military/Units/Vehicle');
+const Soldier = rootRequire('Military/Units/Soldier/Soldier');
+const Vehicle = rootRequire('Military/Units/Vehicle/Vehicle');
 const utils = rootRequire('utils/utils');
-const SimSubject = rootRequire('Military/SimSubject');
+const Group = rootRequire('Military/Groups/Group');
 
-class Squad extends SimSubject{
+class Squad extends Group{
     constructor(nOfUnits = config.units.default,
                 strategy = config.strategy.default,
                 parent = undefined){
@@ -13,7 +13,6 @@ class Squad extends SimSubject{
         this.maxChildRecharge = null;
         this.intervalId = null;
         this.strategy = strategy;
-        this.children = [];
 
         let unitsToCreate = this._getUnitRatio(nOfUnits);
 
@@ -51,8 +50,8 @@ class Squad extends SimSubject{
         if(this.rating > 4 || tmpRatings.hp > 1 || tmpRatings.xp > 1 || tmpRatings.n > 1 || tmpRatings.dmg > 1){
             throw new Error(`Something went wrong, ratings are limited to 1| Total: ${+this.rating.toFixed(2)}, hp:${+tmpRatings.hp.toFixed(2)} , xp:${+tmpRatings.xp.toFixed(2)} , n:${+tmpRatings.n.toFixed(2)} , dmg:${+tmpRatings.dmg.toFixed(2)} `)
         }
-        if(this.strategy !== "random"){
-            this.parent.keepArmySorted(this, oldRating, this.strategy);
+        if(this.strategy !== "random" && oldRating !== undefined){
+            this.parent.keepChildrenSorted(this, oldRating, this.strategy);
         }
 
     }

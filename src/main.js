@@ -3,7 +3,7 @@ global.rootRequire = function(name) {
     return require(__dirname + '/' + name);
 };
 
-const BattleManager = rootRequire('BattleManager');
+const BattleManager = rootRequire('Military/BattleManager');
 const config = rootRequire('config');
 const yargsConf = rootRequire('yargsConf');
 
