@@ -7,14 +7,14 @@ class Army extends Group{
     constructor(nOfSquads = config.squads.default,
                 nOfUnits = config.units.default,
                 strategy = config.strategy.default,
-                parent ){
+                parent, name ){
         super(parent);
+        this.name = name;
         for(let i = 0; i < nOfSquads; i++){
             this.children.push(new Squad(nOfUnits, strategy, this));
         }
 
     }
-
 
 }
 

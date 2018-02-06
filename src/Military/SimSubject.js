@@ -28,13 +28,24 @@ class SimSubject{
     dump(){
         let index = this.getParentIndex();
         if (index > -1) {
-            console.log(`${this.constructor.name} HAS DIED (${this.parent.children.length - 1} more in it's parent ${this.parent.constructor.name})`);
+            this.logDeath();
             this.parent.children.splice(index, 1);
             this.parent.isActive();
         }else{
             throw new Error('You are dumping that which is already dumped! Don\'t!' );
         }
 
+    }
+
+    logDeath(){
+        if(this.constructor.name === "Army"){
+            console.log(`${this.name} army has been annihilated!`);
+        }else if(this.constructor.name === "Squad"){
+            console.log(`A squad from ${this.parent.name} army has been annihilated! (${this.parent.children.length - 1} more of it's squads are still alive!)`);
+        }else if(this.constructor.name === "Soldier" || this.constructor.name === "Vehicle"){
+            let armyName = this.parent.parent.name ? this.parent.parent.name : this.parent.parent.parent.name;
+            console.log(`A ${this.constructor.name} from ${armyName} has died. (${this.parent.children.length - 1} more in it's parent ${this.parent.constructor.name})`);
+        }
     }
 
 
