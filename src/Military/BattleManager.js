@@ -6,18 +6,26 @@ const utils = rootRequire('utils/utils');
 class BattleManager extends Group{
     constructor({nOfArmies, nOfSquads, nOfUnits, strategy}){
         super(null);
-        let usedNames = [];
+        let usedNames = [[]];
+        let usedNamesIndex = 0;
+        let tmpArmyNames = armyNames.slice(0);
         //create armies
         for(let i = 0; i < nOfArmies; i++){
             let name;
-            do{
-                name = armyNames[utils.rand(0,armyNames.length - 1)];
-            }while(usedNames.indexOf(name) > -1);
-            usedNames.push(name);
-            this.children.push(new Army(nOfSquads, nOfUnits, strategy, this, name + " Army"));
+            if(usedNames[usedNamesIndex].length === armyNames.length){
+                usedNamesIndex++;
+                tmpArmyNames = armyNames.slice(0);
+                usedNames[usedNamesIndex] = [];
+            }
+
+            let random = utils.rand(0,tmpArmyNames.length - 1);
+            name = tmpArmyNames[random];
+            tmpArmyNames.splice(tmpArmyNames.indexOf(name), 1);
+
+            usedNames[usedNamesIndex].push(name);
+            this.children.push(new Army(nOfSquads, nOfUnits, strategy, this, `${name} Army ${usedNamesIndex > 0 ? "#" + (usedNamesIndex+1): ""}` ));
         }
         this.startBattle(strategy);
-        global.debug = this.children; //todo remove this
     }
 
     startBattle(strategy){
@@ -96,6 +104,10 @@ class BattleManager extends Group{
 
     _startLog(){
         console.log(`The battle between ${this.children.length} armies has begun!`);
+        console.log('Armies:');
+        for(let army of this.children) {
+            console.log(` - ${army.name}`);
+        }
         setInterval(() => {
             this.logBattleStatus();
         }, 10000);
