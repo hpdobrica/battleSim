@@ -21,4 +21,4 @@ const argv = require('yargs')
   .help()
   .argv;
 
-let bm = new BattleManager(argv);
+let bm = new BattleManager(argv.nOfArmies);

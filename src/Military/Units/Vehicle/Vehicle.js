@@ -22,18 +22,8 @@ class Vehicle extends Unit {
   }
 
   _updateHpRating(hpCoef) {
-    // console.log('++++++++++++++++++++');
-    // console.log(this.children);
-    let avgOpHealth = this.children.reduce((sum, operator) => {
-      // console.log("sum:", sum);
-      // console.log('op:', operator)
-      return sum + operator.health;
-    }, 0);
-    // console.log('-------------------');
-    // let avgOpHealth = 0;
-    // for (const operator of this.children) {
-    //   avgOpHealth += operator.health;
-    // }
+    let avgOpHealth = this.children.reduce((sum, operator) => sum + operator.health, 0);
+
     avgOpHealth /= this.children.length;
     this.rating.hp.val = (this.health + avgOpHealth) * hpCoef;
     this.rating.hp.needsUpdate = false;
@@ -46,7 +36,7 @@ class Vehicle extends Unit {
     for (const operator of this.children) {
       sum += operator.xp / 100;
       if (isAttack && operator.xp < 50) {
-        operator.xp++;
+        operator.xp += 1;
         this.rating.dmg.needsUpdate = true;
       }
     }
@@ -74,7 +64,7 @@ class Vehicle extends Unit {
     } else {
       for (const child of this.children) {
         if (child !== chosenChild) {
-          child.takeDamage(toOtherChildren / (this.children.length - (initialCount > this.children.length ? 0 : 1))); // making sure dead passenger does not take portion of this damage
+          child.takeDamage(toOtherChildren / (this.children.length - (initialCount > this.children.length ? 0 : 1)));
         }
       }
     }

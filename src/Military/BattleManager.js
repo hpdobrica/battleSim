@@ -4,10 +4,11 @@ const armyNames = rootRequire('Military/Groups/Army/armyNames');
 const utils = rootRequire('utils/utils');
 
 class BattleManager extends Group {
-  constructor({
-    nOfArmies, nOfSquads, nOfUnits, strategy,
-  }) {
+  constructor(nOfArmies) {
     super(null);
+    this.strongest = undefined;
+    this.weakest = undefined;
+
     const usedNames = [[]];
     let usedNamesIndex = 0;
     let tmpArmyNames = armyNames.slice(0);
@@ -24,36 +25,24 @@ class BattleManager extends Group {
       tmpArmyNames.splice(tmpArmyNames.indexOf(name), 1);
 
       usedNames[usedNamesIndex].push(name);
-      this.children.push(new Army(nOfSquads, nOfUnits, strategy, this, `${name} Army ${usedNamesIndex > 0 ? `#${usedNamesIndex + 1}` : ''}`));
+      this.children.push(new Army(this, `${name} Army ${usedNamesIndex > 0 ? `#${usedNamesIndex + 1}` : ''}`));
     }
-    this.startBattle(strategy);
+    this.startBattle();
   }
 
-  startBattle(strategy) {
+  startBattle() {
     // calculate everyone's rating
     for (const army of this.children) {
       for (const squad of army.children) {
         squad.updateRating();
       }
     }
-    // // sort squads
-    if (strategy !== 'random') {
-      for (const army of this.children) {
-        army.children.sort((a, b) => {
-          if (strategy === 'strongest') {
-            return b.rating - a.rating;
-          }
-          return b.rating + a.rating;
-        });
-      }
-      // sort armies
-      this.children.sort((a, b) => {
-        if (strategy === 'strongest') {
-          return b.children[0].rating - a.children[0].rating;
-        }
-        return b.children[0].rating + a.children[0].rating;
-      });
-    }
+
+    [this.weakest, this.strongest] = this.getMinMax();
+    console.log(this.weakest.rating, this.strongest.rating);
+
+    // this.maxChildRecharge = Math.max(...this.children.map(child => child.recharge));
+
     // let the games begin
     this.children.forEach((army) => {
       army.children.forEach((squad) => {
@@ -90,6 +79,31 @@ class BattleManager extends Group {
     super.keepChildrenSorted(modifiedChild, oldRating, strategy);
   }
 
+  getMinMax() {
+    const initialObj = {
+      min: {
+        rating: Number.MAX_VALUE,
+      },
+      max: {
+        rating: 0,
+      },
+    };
+    const minMax = this.children.map((army) => {
+      // turns every army into min/max squad
+      return army.children.reduce((res, squad) => {
+        if (squad.rating < res.min.rating) res.min = squad;
+        if (squad.rating > res.max.rating) res.max = squad;
+        return res;
+      }, initialObj);
+    }).reduce((res, obj) => {
+      if (obj.min.rating < res.min.rating) res.min = obj.min;
+      if (obj.max.rating > res.max.rating) res.max = obj.max;
+      return res;
+    }, initialObj);
+
+    return [minMax.min, minMax.max];
+  }
+
   dump() {
     throw new Error('Can\'t dump the battle manager!');
   }
@@ -101,7 +115,7 @@ class BattleManager extends Group {
     console.log(`The battle between ${this.children.length} armies has begun!`);
     console.log('Armies:');
     this.children.forEach((army) => {
-      console.log(` - ${army.name}`);
+      // console.log(` - ${army.name}`);
     });
     setInterval(() => {
       this.logBattleStatus();

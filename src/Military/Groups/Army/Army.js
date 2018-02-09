@@ -1,18 +1,15 @@
 const Squad = rootRequire('Military/Groups/Squad/Squad');
 const config = rootRequire('config');
 const Group = rootRequire('Military/Groups/Group');
+const utils = rootRequire('utils/utils');
 
 class Army extends Group {
-  constructor(
-    nOfSquads = config.squads.default,
-    nOfUnits = config.units.default,
-    strategy = config.strategy.default,
-    parent, name,
-  ) {
+  constructor(parent, name) {
     super(parent);
     this.name = name;
+    const nOfSquads = utils.rand(config.squads.min, config.squads.max);
     for (let i = 0; i < nOfSquads; i += 1) {
-      this.children.push(new Squad(nOfUnits, strategy, this));
+      this.children.push(new Squad(this));
     }
   }
 }

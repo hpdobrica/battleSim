@@ -7,20 +7,17 @@ const Group = rootRequire('Military/Groups/Group');
 const has = Object.prototype.hasOwnProperty;
 
 class Squad extends Group {
-  constructor(
-    nOfUnits = config.units.default,
-    strategy = config.strategy.default,
-    parent = undefined,
-  ) {
+  constructor(parent = undefined) {
     super(parent);
     this.target = null;
     this.maxChildRecharge = null;
     this.intervalId = null;
-    this.strategy = strategy;
+
+    const nOfUnits = utils.rand(config.units.min, config.units.max);
 
     const unitsToCreate = this._getUnitRatio(nOfUnits);
 
-    for (let i = 0; i < unitsToCreate.soldiers; i++) {
+    for (let i = 0; i < unitsToCreate.soldiers; i += 1) {
       this.children.push(new Soldier(this));
     }
     for (let i = 0; i < unitsToCreate.vehicles; i += 1) {
