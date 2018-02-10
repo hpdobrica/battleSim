@@ -1,9 +1,9 @@
-const config = rootRequire('config');
-const Soldier = rootRequire('Military/Units/Soldier/Soldier');
-const Vehicle = rootRequire('Military/Units/Vehicle/Vehicle');
-const utils = rootRequire('utils/utils');
-const Group = rootRequire('Military/Groups/Group');
-const Strategies = rootRequire('Military/Strategies');
+const config = require('../../config');
+const Soldier = require('../Units/Soldier');
+const Vehicle = require('../Units/Vehicle');
+const utils = require('../../utils/utils');
+const Group = require('./Group');
+const Strategies = require('../Strategies');
 
 const has = Object.prototype.hasOwnProperty;
 
@@ -16,7 +16,7 @@ class Squad extends Group {
 
     const nOfUnits = utils.rand(config.units.min, config.units.max);
 
-    const unitsToCreate = this._getUnitRatio(nOfUnits);
+    const unitsToCreate = Squad.getUnitRatio(nOfUnits);
 
     for (let i = 0; i < unitsToCreate.soldiers; i += 1) {
       this.children.push(new Soldier(this));
@@ -37,7 +37,6 @@ class Squad extends Group {
   }
 
   updateRating() {
-    const oldRating = this.rating;
     const tmpRatings = {
       hp: 0, xp: 0, n: 0, dmg: 0,
     };
@@ -57,7 +56,7 @@ class Squad extends Group {
   }
 
 
-  _getUnitRatio(nOfUnits) {
+  static getUnitRatio(nOfUnits) {
     const r = utils.rand(0, nOfUnits);
     return {
       soldiers: nOfUnits - r,
@@ -71,10 +70,6 @@ class Squad extends Group {
 
   getDamage() {
     const total = this.children.reduce((sum, child) => sum + child.getDamage(), 0);
-    // let total = 0;
-    // for (const child of this.children) {
-    //   total += child.getDamage();
-    // }
     this.updateRating();
     return total;
   }
@@ -82,8 +77,8 @@ class Squad extends Group {
   initiateCombat(armies) {
     this.everyone = armies;
 
-    this._getChildRecharge();
-    this._setBattleInterval();
+    this.getChildRecharge();
+    this.setBattleInterval();
   }
 
   chooseStrategy() {
@@ -92,65 +87,63 @@ class Squad extends Group {
     this.strategy = Strategies[keys[rand]];
   }
 
-  _chooseTarget() {
+  chooseTarget() {
+    let stratName;
     this.enemies = this.everyone.slice(0);
     this.enemies.splice(this.enemies.indexOf(this.parent), 1);
     if (this.strategy === Strategies.RANDOM) {
       const targetArmy = this.enemies[utils.rand(0, this.enemies.length - 1)];
       this.target = targetArmy.children[utils.rand(0, targetArmy.children.length - 1)];
+      stratName = 'random';
     } else if (this.strategy === Strategies.STRONGEST) {
       this.target = this.enemies.reduce((result, army) => {
-        if (army.max.rating > result.max.rating) result = army;
+        if (army.max.rating > result.max.rating) result = army; // eslint-disable-line no-param-reassign
         return result;
       }, { max: { rating: 0 } }).max;
+      stratName = 'strongest';
     } else if (this.strategy === Strategies.WEAKEST) {
       this.target = this.enemies.reduce((result, army) => {
-        if (army.min.rating < result.min.rating) result = army;
+        if (army.min.rating < result.min.rating) result = army; // eslint-disable-line no-param-reassign
         return result;
       }, { min: { rating: Number.MAX_VALUE } }).min;
+      stratName = 'weakest';
     } else {
       throw new Error('Strategy not found!');
     }
-    console.log(`#${this.parent.name}'s Squad #${this.getParentIndex()} has chosen ${this.target.parent.name}'s squad #${this.target.getParentIndex()} for it's target using ${this.strategy}`);
-    if(this.target.getParentIndex() == -1){
-      console.log("break here");
-    }
+    console.log(`TARGET (${stratName} strategy): #${this.parent.name}/#${this.getParentIndex()} targets ${this.target.parent.name}/#${this.target.getParentIndex()}`);
   }
 
-  _getChildRecharge() {
-    // for (const child of this.children) {
-    //   if (child.recharge > maxRecharge) {
-    //     maxRecharge = child.recharge;
-    //   }
-    // }
+  getChildRecharge() {
     this.maxChildRecharge = Math.max(...this.children.map(child => child.recharge));
 
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
-      this._setBattleInterval();
+      this.setBattleInterval();
     }
   }
 
-  _attack() {
-    // if (this.target.parent.children.indexOf(this.target) === -1) {
-    //   this.target = null;
-    //   this._chooseTarget();
-    // }
+  attack() {
+    if (this.target.parent.children.indexOf(this.target) === -1) {
+      throw new Error('Targeting a dead squad? Don\'t you have something better to do?');
+    }
     const attackPts = this.getAttack();
     const defensePts = this.target.getAttack();
     if (attackPts > defensePts) {
       const dmg = this.getDamage();
-      // console.log(`#${this.parent.parent.children.indexOf(this.parent)}/${this.parent.children.indexOf(this)} > #${this.target.parent.parent.children.indexOf(this.target.parent)}/${this.target.parent.children.indexOf(this.target)} for ${dmg} damage`);
+      console.log(`ATTACK: ${this.parent.name}/#${this.parent.children.indexOf(this)} inflicts ${+dmg.toFixed(2)} damage to ${this.target.parent.name}/#${this.target.parent.children.indexOf(this.target)}`);
       this.target.takeDamage(dmg);
+    } else {
+      console.log(`BLOCK: ${this.target.parent.name}'s #${this.target.parent.children.indexOf(this.target)} squad defends the ${this.parent.name} #${this.parent.children.indexOf(this)} squad's attack`);
     }
   }
 
-  _setBattleInterval() {
+
+  setBattleInterval() {
     this.intervalId = setInterval(() => {
       this.chooseStrategy();
-      this._chooseTarget();
-      this._attack();
+      this.chooseTarget();
+      this.attack();
     }, this.maxChildRecharge);
   }
 

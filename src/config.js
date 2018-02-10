@@ -31,11 +31,6 @@ const config = {
     },
 
   },
-  strategy: {
-    choices: ['random', 'weakest', 'strongest'],
-  },
-
-
 };
 
 module.exports = config;

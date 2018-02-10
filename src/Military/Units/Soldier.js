@@ -1,5 +1,5 @@
-const Unit = rootRequire('Military/Units/Unit');
-const utils = rootRequire('utils/utils');
+const Unit = require('./Unit');
+const utils = require('../../utils/utils');
 
 class Soldier extends Unit {
   constructor(parent) {
@@ -7,7 +7,7 @@ class Soldier extends Unit {
     this.xp = 0;
   }
 
-  _getAttackModifier() {
+  getAttackModifier() {
     return utils.rand(30 + this.xp, 100) / 100;
   }
 

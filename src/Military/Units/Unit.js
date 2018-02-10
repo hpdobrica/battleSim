@@ -1,6 +1,6 @@
-const config = rootRequire('config');
-const utils = rootRequire('utils/utils');
-const SimSubject = rootRequire('Military/SimSubject');
+const config = require('../../config');
+const utils = require('../../utils/utils');
+const SimSubject = require('../SimSubject');
 
 const has = Object.prototype.hasOwnProperty;
 
@@ -11,7 +11,7 @@ class Unit extends SimSubject {
       throw new TypeError('Cannot construct a Unit directly!');
     }
 
-    this._overrideRequiredFor(new.target, ['_getAttackModifier', 'getDamage']);
+    this.overrideRequiredFor(new.target, ['getAttackModifier', 'getDamage']);
 
     this.health = utils.rand(1, config.units.maxHp);
     this.recharge = utils.rand(config.units.recharge.min, config.units.recharge.max);
@@ -19,12 +19,12 @@ class Unit extends SimSubject {
     this.rating = {
       hp: {
         needsUpdate: true,
-        update: this._updateHpRating.bind(this),
+        update: this.updateHpRating.bind(this),
         val: undefined,
       },
       dmg: {
         needsUpdate: true,
-        update: this._updateDmgRating.bind(this),
+        update: this.updateDmgRating.bind(this),
         val: undefined,
       },
     };
@@ -32,32 +32,30 @@ class Unit extends SimSubject {
 
   getRating(coefs) {
     const resultRating = {};
-    for (const property in this.rating) {
-      if (has.call(this.rating, property)) {
-        if (this.rating[property].needsUpdate) {
-          resultRating[property] = this.rating[property].update(coefs[property]);
-          this.rating[property].needsUpdate = false;
-        }
-        resultRating[property] = this.rating[property].val;
+    Object.keys(this.rating).forEach((key) => {
+      if (this.rating[key].needsUpdate) {
+        resultRating[key] = this.rating[key].update(coefs[key]);
+        this.rating[key].needsUpdate = false;
       }
-    }
+      resultRating[key] = this.rating[key].val;
+    });
     return resultRating;
   }
 
-  _updateHpRating(hpCoef) {
+  updateHpRating(hpCoef) {
     this.rating.hp.val = this.health * hpCoef;
     return this.rating.hp.val;
   }
 
-  _updateDmgRating(dmgCoef) {
+  updateDmgRating(dmgCoef) {
     this.rating.dmg.val = this.getDamage(false) * dmgCoef;
     return this.rating.dmg.val;
   }
 
 
   getAttack() {
-    const base = 0.5 * (1 + this.health / 100);
-    return base * this._getAttackModifier();
+    const base = 0.5 * (1 + (this.health / 100));
+    return base * this.getAttackModifier();
   }
 
   isActive() {
@@ -68,13 +66,14 @@ class Unit extends SimSubject {
     if (this.children) {
       return super.isActive();
     }
+    return false;
   }
 
   dump() {
     super.dump();
     if (has.call(this.parent, 'maxChildRecharge')) {
       if (this.parent.maxChildRecharge === this.recharge) {
-        this.parent._getChildRecharge();
+        this.parent.getChildRecharge();
       }
     }
     if (has.call(this.parent, 'recalculateCoef')) {
@@ -82,7 +81,7 @@ class Unit extends SimSubject {
     }
   }
 
-  _overrideRequiredFor(overrider, fnArr) {
+  overrideRequiredFor(overrider, fnArr) {
     fnArr.forEach((fn) => {
       if (typeof this[fn] === 'undefined') {
         throw new TypeError(`${overrider.name} class must override the method ${fn}`);

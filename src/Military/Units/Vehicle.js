@@ -1,7 +1,7 @@
-const Unit = rootRequire('Military/Units/Unit');
-const Soldier = rootRequire('Military/Units/Soldier/Soldier');
-const utils = rootRequire('utils/utils');
-const config = rootRequire('config');
+const Unit = require('./Unit');
+const Soldier = require('./Soldier');
+const utils = require('../../utils/utils');
+const config = require('../../config');
 
 class Vehicle extends Unit {
   constructor(parent) {
@@ -17,11 +17,11 @@ class Vehicle extends Unit {
     this.recharge = utils.rand(config.units.vehicles.recharge.min, config.units.recharge.max);
   }
 
-  _getAttackModifier() {
+  getAttackModifier() {
     return utils.gAvg(this.children, 'getAttack', true);
   }
 
-  _updateHpRating(hpCoef) {
+  updateHpRating(hpCoef) {
     let avgOpHealth = this.children.reduce((sum, operator) => sum + operator.health, 0);
 
     avgOpHealth /= this.children.length;
@@ -32,14 +32,14 @@ class Vehicle extends Unit {
 
 
   getDamage(isAttack = true) {
-    let sum = 0;
-    for (const operator of this.children) {
-      sum += operator.xp / 100;
+    const sum = this.children.reduce((res, operator) => {
+      res += operator.xp / 100; // eslint-disable-line no-param-reassign
       if (isAttack && operator.xp < 50) {
         operator.xp += 1;
         this.rating.dmg.needsUpdate = true;
       }
-    }
+      return res;
+    }, 0);
     return 0.1 + sum;
   }
 
@@ -62,14 +62,15 @@ class Vehicle extends Unit {
       // if there is no one else to take the damage
       this.health -= toOtherChildren;
     } else {
-      for (const child of this.children) {
+      this.children.forEach((child) => {
         if (child !== chosenChild) {
           child.takeDamage(toOtherChildren / (this.children.length - (initialCount > this.children.length ? 0 : 1)));
         }
-      }
+      });
     }
     this.rating.hp.needsUpdate = true;
     this.rating.dmg.needsUpdate = true;
+    return null;
   }
 }
 

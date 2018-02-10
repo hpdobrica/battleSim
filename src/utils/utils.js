@@ -1,21 +1,19 @@
-module.exports = class Helpers{
-    static rand(min,max){
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+module.exports = class Helpers {
+  static rand(minArg, maxArg) {
+    const min = Math.ceil(minArg);
+    const max = Math.floor(maxArg);
+    return Math.floor(Math.random() * ((max - min) + 1)) + min;
+  }
 
-    static gAvg(group, property, isFn = false){
-        let product = 1;
-        for(let member of group){
-            if(isFn){
-                product *= member[property]();
-            }else{
-                product *= member[property];
-            }
-
-        }
-        return Math.pow(product, 1/group.length);
-    }
-
+  static gAvg(group, property, isFn = false) {
+    let product = 1;
+    group.forEach((child) => {
+      if (isFn) {
+        product *= child[property]();
+      } else {
+        product *= child[property];
+      }
+    });
+    return product ** (1 / group.length);
+  }
 };

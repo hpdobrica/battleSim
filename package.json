@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/main.js",
     "dev": "nodemon ./src/main.js --exec \"npm test\"",
-    "test": "mocha --reporter progress test_setup.js src/**/*.spec.js"
+    "test": "mocha --reporter progress test_setup.js test/**/*.spec.js"
   },
   "author": "",
   "license": "ISC",

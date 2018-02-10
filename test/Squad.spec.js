@@ -1,39 +1,31 @@
-const Squad = rootRequire('Military/Groups/Squad/Squad');
+const Squad = require('../src/Military/Groups/Squad');
 
 const chai = require('chai').should();
 
-describe("Squad", () => {
-    let squad = null;
-    let container = {
-        children: [],
-        isActive(){
+describe('Squad', () => {
+  let squad = null;
+  const container = {
+    children: [],
+    isActive() {
 
-        }
+    },
+  };
+  it('should create a squad', () => {
+    squad = new Squad(container);
+    squad.should.be.instanceOf(Squad);
+  });
+
+  it('should check squad\'s attack calculator', () => {
+    const dummyObj = {
+      children: [
+        { getAttack: () => 1 },
+        { getAttack: () => 2 },
+        { getAttack: () => 3 },
+      ],
     };
-    it('should create a squad', () => {
-        squad = new Squad(3,"random",container);
-        squad.should.be.instanceOf(Squad);
 
-        squad.children.should.have.lengthOf(3);
-        squad.strategy.should.be.equal("random");
-
-    });
-
-    it('should check squad\'s attack calculator', () => {
-        let dummyObj = {
-            children: [
-                {getAttack: () => 1},
-                {getAttack: () => 2},
-                {getAttack: () => 3},
-            ]
-        }
-
-        let attack = squad.getAttack.apply(dummyObj);
-        attack.should.be.a('number');
-        attack.should.be.closeTo(1.8171205928321, 0.001);
-
-
-    })
-
-
+    const attack = squad.getAttack.apply(dummyObj);
+    attack.should.be.a('number');
+    attack.should.be.closeTo(1.8171205928321, 0.001);
+  });
 });

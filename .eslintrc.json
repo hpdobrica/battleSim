@@ -1,3 +1,10 @@
 {
-    "extends": "airbnb-base"
+    "extends": "airbnb-base",
+    "rules": {
+        "no-console": "off",
+        "max-len": "off",
+        "no-param-reassign": ["error", {
+            "props": false
+        }]
+    }
 }

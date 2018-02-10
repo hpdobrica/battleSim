@@ -1,7 +1,7 @@
-const Squad = rootRequire('Military/Groups/Squad/Squad');
-const config = rootRequire('config');
-const Group = rootRequire('Military/Groups/Group');
-const utils = rootRequire('utils/utils');
+const Group = require('./Group');
+const Squad = require('./Squad');
+const config = require('../../config');
+const utils = require('../../utils/utils');
 
 class Army extends Group {
   constructor(parent, name) {
@@ -17,7 +17,7 @@ class Army extends Group {
 
   setMin() {
     this.min = this.children.reduce((res, squad) => {
-      if (squad.rating < res.rating) res = squad;
+      if (squad.rating < res.rating) res = squad; // eslint-disable-line no-param-reassign
       return res;
     }, {
       rating: Number.MAX_VALUE,
@@ -26,7 +26,7 @@ class Army extends Group {
 
   setMax() {
     this.max = this.children.reduce((res, squad) => {
-      if (squad.rating > res.rating) res = squad;
+      if (squad.rating > res.rating) res = squad; // eslint-disable-line no-param-reassign
       return res;
     }, {
       rating: 0,
